@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
 
-class ResetPasswordRequest extends FormRequest
+class RegisterUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +28,9 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email|max:50',
-            'validation_code' => 'required|string|min:8|max:8',
+            'name' => 'required|string|min:3|max:50',
+            'user_name' => 'required|string|min:4|max:25|unique:users',
+            'email' => 'required|string|email|max:50|unique:users',
             'password' => 'required|string|confirmed|min:8|max:50',
             'password_confirmation' => 'required'
         ];
@@ -43,15 +44,22 @@ class ResetPasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'name.required' => 'Nome é obrigatório.',
+            'name.string' => 'Nome deve ser string.',
+            'name.min' => 'Nome deve ter no mínimo 3 caracteres.',
+            'name.max' => 'Nome deve ter no máximo 50 caracteres.',
+
+			'user_name.required' => 'Nome de usuário é obrigatório.',
+			'user_name.string' => 'Nome de usuário deve ser string.',
+			'user_name.min' => 'Nome de usuário deve ter no mínimo 4 caracteres.',
+			'user_name.max' => 'Nome de usuário deve ter no máximo 50 caracteres.',
+			'user_name.unique' => 'Nome de usuário já cadastrado.',
+
             'email.required' => 'Email é obrigatório.',
             'email.string' => 'Email deve ser string.',
             'email.max' => 'Email deve ter no máximo 50 caracteres.',
             'email.email' => 'Email não é válido.',
-
-            'validation_code.required' => 'Código de verificação é obrigatório.',
-            'validation_code.string' => 'Código de verificação deve ser string.',
-            'validation_code.min' => 'Código de verificação inválido.',
-            'validation_code.max' => 'Código de verificação inválido.',
+            'email.unique' => 'Email já cadastrado.',
 
             'password.required' => 'Senha é obrigatório.',
             'password.string' => 'Senha deve ser string.',
@@ -61,5 +69,13 @@ class ResetPasswordRequest extends FormRequest
 
             'password_confirmation.required' => 'Campo Repetir Senha é obrigatório.',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = (new ValidationException($validator))->errors();
+        throw new HttpResponseException(
+            response()->json(['message' => 'Dados fornecidos inválidos', 'errors' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+        );
     }
 }

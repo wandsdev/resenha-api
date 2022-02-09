@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\AccountValidationRequest;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterUserRequest;
-use App\Http\Requests\ResetPasswordRequest;
-use App\Http\Requests\ResendValidateCodeRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Auth\AccountValidationRequest;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use App\Http\Requests\Api\Auth\RegisterUserRequest;
+use App\Http\Requests\Api\Auth\ResetPasswordRequest;
+use App\Http\Requests\Api\Auth\ResendValidateCodeRequest;
 use App\Traits\TResponse;
 use App\Services\AuthService;
 use App\Services\UserService;
@@ -22,17 +23,17 @@ class AuthController extends Controller
     /**
      * @var AuthService
      */
-    private AuthService $authService;
+    private $authService;
 
     /**
      * @var UserService
      */
-    private UserService $userService;
+    private $userService;
 
     /**
      * @var UserRepository
      */
-    private UserRepository $userRepository;
+    private $userRepository;
 
     /**
      * Create a new AuthController instance.
@@ -44,7 +45,7 @@ class AuthController extends Controller
     public function __construct(AuthService $authService, UserService $userService, UserRepository $userRepository)
     {
         $this->middleware('auth:api', [
-            'only' => ['me', 'logout']
+            'only' => ['me', 'logout', 'refresh']
         ]);
         $this->authService = $authService;
         $this->userService = $userService;

@@ -37,7 +37,8 @@ class UserService
 
         $user = new User();
         $user->name = $request['name'];
-        $user->email = $request['email'];
+		$user->user_name = $request['user_name'];
+		$user->email = $request['email'];
         $user->password = Hash::make($request['password']);
         $user->validation_code = $this->createValidationCode();
         $user->validation_code_validation_date = $this->createValidationCodeValidationDate(10);
