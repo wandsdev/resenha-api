@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Group;
-use App\Models\User;
+use Modules\Group\Entities\Group;
+use Modules\User\Entities\User;
 use Illuminate\Database\Seeder;
 
 class GroupUserSeeder extends Seeder
