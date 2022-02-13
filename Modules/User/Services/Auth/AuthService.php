@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Modules\User\Services;
+namespace Modules\User\Services\Auth;
 
 
 use App\Models\User;

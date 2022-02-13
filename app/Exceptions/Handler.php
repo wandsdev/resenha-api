@@ -38,4 +38,12 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+	public function render($request, Throwable $e)
+	{
+		if ($e instanceof ApiException) {
+			var_dump('dddd');die;
+		}
+		parent::render($request, $e);
+	}
 }

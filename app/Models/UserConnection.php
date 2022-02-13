@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\User\Entities;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,13 +31,4 @@ class UserConnection extends Model
 	{
 		return $this->belongsToMany(User::class, null, 'user_id_a');
 	}
-
-//	/**
-//	 * @return BelongsToMany
-//	 */
-//	public function userIdB(): BelongsToMany
-//	{
-//		return $this->belongsToMany(User::class, 'users', 'user_id_b');
-//	}
-
 }
