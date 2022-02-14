@@ -13,7 +13,7 @@ class LoginService
 	 */
 	public function login(array $credentials)
 	{
-		if (auth()->attempt($credentials)) {
+		if (!auth()->attempt($credentials)) {
 			throw new ApiException('Invalid credentials', 401);
 		}
 	}

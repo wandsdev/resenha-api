@@ -2,11 +2,16 @@
 
 namespace App\Exceptions;
 
+use App\Traits\ApiResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+	use ApiResponse;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -39,11 +44,11 @@ class Handler extends ExceptionHandler
         });
     }
 
-	public function render($request, Throwable $e)
+	public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response
 	{
 		if ($e instanceof ApiException) {
-			var_dump('dddd');die;
+			return $this->responseError($e->getMessage(), $e->getStatusCode());
 		}
-		parent::render($request, $e);
+		return parent::render($request, $e);
 	}
 }

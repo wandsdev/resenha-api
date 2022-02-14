@@ -8,7 +8,7 @@ namespace App\Traits;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-Trait TResponse
+Trait ApiResponse
 {
     /**
      * @param Exception $e
@@ -28,13 +28,24 @@ Trait TResponse
         ], $statusCode);
     }
 
-    public function responseError($message, $statusCode): JsonResponse
+	public function responseSuccess(array $data, string $message, int $statusCode): JsonResponse
+	{
+		return response()->json([
+			'data' => $data,
+			'message' => $message,
+		], $statusCode);
+	}
+
+	/**
+	 * @param $message
+	 * @param $statusCode
+	 * @return JsonResponse
+	 */
+    public function responseError($message, $statusCode, array $errors = []): JsonResponse
     {
         return response()->json([
-            'error' => [
-                'message' => $message,
-                'status_code' => $statusCode,
-            ]
+        	'errors' => $errors,
+			'message' => $message,
         ], $statusCode);
     }
 
