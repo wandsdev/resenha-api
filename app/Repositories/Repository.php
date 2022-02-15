@@ -9,7 +9,7 @@ class Repository
     /**
      * @var Model
      */
-    protected $model;
+    protected \App\Models\User $model;
 
     /**
      * Repository constructor.
