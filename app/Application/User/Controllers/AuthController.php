@@ -2,6 +2,7 @@
 
 namespace Application\User\Controllers;
 
+use Application\Core\Exceptions\ApiException;
 use Application\Core\Http\Controllers\Controller;
 use Application\User\Requests\Auth\RegisterUserRequest;
 use Application\User\Requests\Auth\ResendValidateCodeRequest;
@@ -10,9 +11,10 @@ use Application\User\Requests\Auth\AccountValidationRequest;
 use Domain\Shared\Factories\DTOFactory;
 use Domain\User\Actions\AccountValidateAction;
 use Domain\User\Actions\CreateUserAction;
+use Domain\User\Actions\ResendValidationCodeAction;
 use Domain\User\Services\FindUserServices;
-use Exception;
 use Illuminate\Http\JsonResponse;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class AuthController extends Controller
 {
@@ -33,16 +35,13 @@ class AuthController extends Controller
 	 * @param RegisterUserRequest $request
 	 * @param CreateUserAction $createUserAction
 	 * @return JsonResponse
+	 * @throws UnknownProperties
 	 */
 	public function register(RegisterUserRequest $request, CreateUserAction $createUserAction): JsonResponse
 	{
-		try {
-			$userDTO = $this->dtoFactory->createUserDTO($request->all());
-			$user = $createUserAction->execute($userDTO);
-			return $this->responseSuccess($user->toArray(), 201);
-		} catch (Exception $e) {
-			return $this->responseExceptionError($e);
-		}
+		$userDTO = $this->dtoFactory->createUserDTO($request->all());
+		$user = $createUserAction->execute($userDTO);
+		return $this->responseSuccess($user->toArray(), 201);
 	}
 
 	public function accountValidation(
@@ -55,8 +54,20 @@ class AuthController extends Controller
 		return $this->responseSuccess([], 204);
 	}
 
-	public function resendValidationCode(ResendValidateCodeRequest $request)
+	/**
+	 * @param ResendValidateCodeRequest $request
+	 * @param ResendValidationCodeAction $resendValidationCodeAction
+	 * @return JsonResponse
+	 * @throws UnknownProperties
+	 * @throws ApiException
+	 */
+	public function resendValidationCode(
+		ResendValidateCodeRequest $request,
+		ResendValidationCodeAction $resendValidationCodeAction
+	): JsonResponse
 	{
-
+		$userDTO = $this->dtoFactory->createUserDTO($request->all());
+		$resendValidationCodeAction->execute($userDTO);
+		return $this->responseSuccess([], 204);
 	}
 }
