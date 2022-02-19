@@ -44,17 +44,12 @@ class Handler extends ExceptionHandler
         });
     }
 
-	/**
-	 * @param Request $request
-	 * @param Throwable $e
-	 * @return JsonResponse|Response|\Symfony\Component\HttpFoundation\Response
-	 * @throws Throwable
-	 */
-	public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response
+	public function render($request, Throwable $e)
 	{
 		if ($e instanceof ApiException) {
-			return $this->responseError($e->getMessage(), $e->getStatusCode());
+			return $this->responseError($e->getMessage(), $e->getStatusCode(), $e->getErrors());
 		}
-		return parent::render($request, $e);
+
+		return $this->responseExceptionError($e);
 	}
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Domain\User\Services;
+namespace Domain\User\Services;
 
 use Domain\User\Contracts\Repositories\IUserRepository;
+use Support\User\Models\User;
 
 class FindUserServices
 {
@@ -12,6 +13,8 @@ class FindUserServices
 
 	public function execute()
 	{
-		return $this->userRepository->findUser();
+		/** @var User $user */
+		$user = $this->userRepository->findUser();
+		return $user;
 	}
 }

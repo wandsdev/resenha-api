@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\User;
+namespace Domain\User;
 
 use Carbon\Carbon;
 use DateTime;

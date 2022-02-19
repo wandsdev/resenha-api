@@ -4,33 +4,35 @@ namespace Application\Core\Response;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 Trait ApiResponse
 {
 	/**
-	 * @param Exception $e
+	 * @param Exception|Throwable $e
 	 * @param int $statusCode
 	 * @return JsonResponse
 	 */
-	public function responseExceptionError(Exception $e, $statusCode = 500): JsonResponse
+	public function responseExceptionError(Exception|Throwable $e, $statusCode = 500): JsonResponse
 	{
 		return response()->json([
+			'message' => $e->getMessage(),
 			'error' => [
-				'message' => $e->getMessage(),
 				'code' => $e->getCode(),
 				'line' => $e->getLine(),
 				'File' => $e->getFile(),
-				'status_code' => $statusCode,
 			]
 		], $statusCode);
 	}
 
-	public function responseSuccess(array $data, string $message, int $statusCode): JsonResponse
+	public function responseSuccess(array $data = [], int $statusCode = 200, string $message = ''): JsonResponse
 	{
-		return response()->json([
-			'data' => $data,
-			'message' => $message,
-		], $statusCode);
+		$data = ['message' => $message];
+
+		if (count($data)) {
+			$data['data'] = $data;
+		}
+		return response()->json($data, $statusCode);
 	}
 
 	/**
@@ -41,10 +43,13 @@ Trait ApiResponse
 	 */
 	public function responseError($message, $statusCode, array $errors = []): JsonResponse
 	{
-		return response()->json([
-			'errors' => $errors,
-			'message' => $message,
-		], $statusCode);
+		$data = ['message' => $message];
+
+		if (count($errors)) {
+			$data['errors'] = $errors;
+		}
+
+		return response()->json($data, $statusCode);
 	}
 
 	/**
