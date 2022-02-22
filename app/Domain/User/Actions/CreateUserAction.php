@@ -2,7 +2,7 @@
 
 namespace Domain\User\Actions;
 
-use Domain\User\Services\UserService;
+use Domain\User\Services\UserAuthService;
 use Domain\User\DTO\UserDTO;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +12,7 @@ use Support\User\Repositories\UserRepository;
 class CreateUserAction
 {
 	public function __construct(
-		private UserService $userService,
+		private UserAuthService $userAuthService,
 		private UserRepository $userRepository
 	) {}
 
@@ -23,9 +23,10 @@ class CreateUserAction
 	 */
 	public function execute(UserDTO $userDTO): Model|User
 	{
-		$userDTO->validation_code = $this->userService->createValidationCode();
-		$userDTO->validation_code_validation_date = $this->userService->createValidationCodeValidationDate(10);
-		$userDTO->password = $this->userService->createPasswordHash($userDTO->password);
+		$validationCodeTime = config('domains.user.validation_code_time');
+		$userDTO->validation_code = $this->userAuthService->createValidationCode();
+		$userDTO->validation_code_validation_date = $this->userAuthService->createValidationCodeValidationDate($validationCodeTime);
+		$userDTO->password = $this->userAuthService->createPasswordHash($userDTO->password);
 		return $this->userRepository->createUser($userDTO->toArray());
 	}
 }

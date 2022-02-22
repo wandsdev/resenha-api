@@ -5,24 +5,27 @@ namespace Domain\User\Actions;
 
 
 use Domain\Shared\Services\MessageService;
-use Domain\User\Services\UserService;
+use Domain\User\Services\UserAuthService;
 use Application\Core\Exceptions\ApiException;
 use Domain\User\DTO\UserDTO;
-use Support\User\Models\User;
 use Support\User\Repositories\UserRepository;
 
 class AccountValidateAction
 {
 	public function __construct(
 		private UserRepository $userRepository,
-		private UserService $userService
+		private UserAuthService $userAuthService
 	) {}
 
-	public function execute(UserDTO $userDTO): User
+	/**
+	 * @param UserDTO $userDTO
+	 * @throws ApiException
+	 */
+	public function execute(UserDTO $userDTO)
 	{
 		$user = $this->userRepository->findByEmailOrFail($userDTO->email);
 
-		if ($this->userService->codeIsExpired($user)) {
+		if ($this->userAuthService->codeIsExpired($user)) {
 			throw new ApiException(MessageService::user('VALIDATION_CODE_EXPIRATION'), 422);
 		}
 
@@ -30,6 +33,6 @@ class AccountValidateAction
 			throw new ApiException(MessageService::user('VALIDATION_CODE_INVALID'), 422);
 		}
 
-		return $this->userRepository->accountValidate($user);
+		$this->userRepository->accountValidate($user);
 	}
 }

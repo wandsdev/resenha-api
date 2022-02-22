@@ -27,12 +27,13 @@ Trait ApiResponse
 
 	public function responseSuccess(array $data = [], int $statusCode = 200, string $message = ''): JsonResponse
 	{
-		$data = ['message' => $message];
+		$responsedata = ['message' => $message];
 
 		if (count($data)) {
-			$data['data'] = $data;
+			$responsedata['data'] = $data;
 		}
-		return response()->json($data, $statusCode);
+
+		return response()->json($responsedata, $statusCode);
 	}
 
 	/**

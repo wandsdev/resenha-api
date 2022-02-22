@@ -5,12 +5,18 @@ namespace Domain\User\Services;
 use Application\User\Notifications\ValidationCodeUserAccount;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Support\User\Models\User;
+use Support\User\Repositories\UserRepository;
 
-class UserService
+class UserAuthService
 {
+
+	public function __construct(public UserRepository $userRepository)
+	{}
+
 	/**
 	 * @return int
 	 * @throws Exception
@@ -56,5 +62,36 @@ class UserService
 		$validationCodeValidationDate = Carbon::createFromFormat('Y-m-d H:i:s', $user->validation_code_validation_date);
 		$currentDate = Carbon::now();
 		return $currentDate > $validationCodeValidationDate;
+	}
+
+	public function generateAndSendValidationCode(User $user)
+	{
+		$validationCodeTime = config('domains.user.validation_code_time');
+		$user->validation_code = $this->createValidationCode();
+		$user->validation_code_validation_date = $this->createValidationCodeValidationDate($validationCodeTime);
+		$this->userRepository->save($user);
+		$this->sendValidationCode($user);
+	}
+
+	/**
+	 * @param User $user
+	 * @return array
+	 */
+	public function getUserData(User $user): array
+	{
+		return [
+			'token' => $user->createToken('api-token')->plainTextToken,
+			'token_type' => 'Bearer',
+			'user' => [
+				'name' => $user->name,
+				'user_name' => $user->user_name,
+				'email' => $user->email,
+			]
+		];
+	}
+
+	public function logout()
+	{
+		Auth::user()->tokens()->delete();
 	}
 }

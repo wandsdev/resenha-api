@@ -2,13 +2,13 @@
 
 namespace Application\User\Observers;
 
-use Domain\User\Services\UserService;
+use Domain\User\Services\UserAuthService;
 use Support\User\Models\User;
 
 class UserObserver
 {
 	public function __construct(
-		public UserService $userService
+		public UserAuthService $userService
 	) {}
 
 	/**

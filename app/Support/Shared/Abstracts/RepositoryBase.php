@@ -79,4 +79,9 @@ abstract class RepositoryBase
         return $this->model->destroy($id);
     }
 
+    public function save(Model $model)
+	{
+		$model->save();
+	}
+
 }
