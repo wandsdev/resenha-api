@@ -18,6 +18,7 @@ class Messages
 		'ACCOUNT_NOT_VALIDATED',
 		'CREDENTIALS_INVALID',
 		'LOGGED_OUT',
+		'SAME_LAST_PASSWORD',
 	];
 
 	public const GROUP = [

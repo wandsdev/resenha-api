@@ -4,18 +4,22 @@ namespace Application\User\Controllers;
 
 use Application\Core\Exceptions\ApiException;
 use Application\Core\Http\Controllers\Controller;
+use Application\User\Requests\Auth\ForgotPasswordRequest;
 use Application\User\Requests\Auth\LoginRequest;
 use Application\User\Requests\Auth\RegisterUserRequest;
 use Application\User\Requests\Auth\ResendValidateCodeRequest;
 use Application\Core\Response\ApiResponse;
 use Application\User\Requests\Auth\AccountValidationRequest;
+use Application\User\Requests\Auth\ResetPasswordRequest;
 use Domain\Shared\Factories\DTOFactory;
 use Domain\Shared\Services\MessageService;
 use Domain\User\Actions\AccountValidateAction;
 use Domain\User\Actions\CreateUserAction;
+use Domain\User\Actions\ForgotPasswordAction;
 use Domain\User\Actions\LoginAction;
 use Domain\User\Actions\LogoutAction;
 use Domain\User\Actions\ResendValidationCodeAction;
+use Domain\User\Actions\ResetPasswordAction;
 use Domain\User\Services\FindUserServices;
 use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -99,5 +103,38 @@ class AuthController extends Controller
 	{
 		$logoutAction->execute();
 		return $this->responseSuccess([], 200, MessageService::user('LOGGED_OUT'));
+	}
+
+	/**
+	 * @param ForgotPasswordRequest $request
+	 * @param ForgotPasswordAction $forgotPasswordAction
+	 * @return JsonResponse
+	 * @throws UnknownProperties
+	 */
+	public function forgotPassword(
+		ForgotPasswordRequest $request,
+		ForgotPasswordAction $forgotPasswordAction
+	): JsonResponse
+	{
+		$userDTO = $this->dtoFactory->createUserDTO($request->all());
+		$forgotPasswordAction->execute($userDTO);
+		return $this->responseSuccess([], 204);
+	}
+
+	/**
+	 * @param ResetPasswordRequest $request
+	 * @param ResetPasswordAction $resetPasswordAction
+	 * @return JsonResponse
+	 * @throws ApiException
+	 * @throws UnknownProperties
+	 */
+	public function resetPassword(
+		ResetPasswordRequest $request,
+		ResetPasswordAction $resetPasswordAction
+	): JsonResponse
+	{
+		$userDTO = $this->dtoFactory->createUserDTO($request->all());
+		$resetPasswordAction->execute($userDTO);
+		return $this->responseSuccess([], 204);
 	}
 }
