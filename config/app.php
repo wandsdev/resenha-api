@@ -56,7 +56,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'asset_url' => env('ASSET_URL', null),
+    'asset_url' => env('ASSET_URL'),
 
     /*
     |--------------------------------------------------------------------------
@@ -171,17 +171,12 @@ return [
         /*
          * Application Service Providers...
          */
-		Application\Core\Providers\AppServiceProvider::class,
-		Application\Core\Providers\AuthServiceProvider::class,
-        // Application\Core\Providers\BroadcastServiceProvider::class,
-		Application\Core\Providers\EventServiceProvider::class,
-		Application\Core\Providers\RouteServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
 
-		/*
-         * User Domain Providers...
-         */
-
-		Application\User\Providers\RepositoryServiceProvider::class
     ],
 
     /*
@@ -196,7 +191,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // ...
+        // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
 ];
