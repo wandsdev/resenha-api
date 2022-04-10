@@ -107,5 +107,14 @@ return [
     */
 
     'password_timeout' => 10800,
+	/**
+	|--------------------------------------------------------------------------
+	| Validation Code Expiration Time
+	|--------------------------------------------------------------------------
+	| Definição do tempo que o código de validação de conta e recuperar senha
+	| vai ser válido
+	|
+	*/
 
+	'validation_code_time' => 10 // in minutes
 ];

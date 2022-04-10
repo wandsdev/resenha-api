@@ -3,42 +3,59 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Class User
+ * * @mixin Builder
+ */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+	use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+	protected $fillable = [
+		'name',
+		'user_name',
+		'email',
+		'password',
+		'validation_code',
+		'validation_code_validation_date',
+		'email_verified',
+	];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+	protected $hidden = [
+		'password',
+		'remember_token',
+		'validation_code',
+		'validation_code_validation_date',
+		'email_verified',
+		'updated_at',
+		'created_at'
+	];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+	protected $casts = [
+		'email_verified_at' => 'datetime',
+		'email_verified' => 'boolean'
+	];
+
+	public function groups(): BelongsToMany
+	{
+		return $this->belongsToMany(Group::class)->withPivot('is_admin');
+	}
+
+	public function events(): BelongsToMany
+	{
+		return $this->belongsToMany(Event::class)->withPivot('confirmed');
+	}
+
+	public function userConnections(): HasMany
+	{
+		return $this->hasMany(UserConnection::class, 'user_id_a');
+	}
 }
